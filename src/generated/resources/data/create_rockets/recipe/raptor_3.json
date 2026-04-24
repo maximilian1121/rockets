@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "simulated:engine_assembly"
+    },
+    "M": {
+      "item": "create:precision_mechanism"
+    },
+    "S": {
+      "item": "create:sturdy_sheet"
+    }
+  },
+  "pattern": [
+    " M ",
+    " C ",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "create_rockets:raptor_3"
+  }
+}

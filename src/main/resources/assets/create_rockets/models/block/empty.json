@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "particle": "create_rockets:block/thruster_block"
+  },
+  "elements": []
+}

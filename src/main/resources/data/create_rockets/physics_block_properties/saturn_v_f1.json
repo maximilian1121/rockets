@@ -1,0 +1,7 @@
+{
+  "selector": "create_rockets:saturn_v_f1",
+  "properties": {
+    "sable:mass": 5.0,
+    "sable:volume": 1.5
+  }
+}

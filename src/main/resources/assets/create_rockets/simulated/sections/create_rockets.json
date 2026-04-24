@@ -1,0 +1,11 @@
+{
+  "priority": 1500,
+  "title": {
+    "text": { "translate": "create_rockets.simulated_section.create_rockets" },
+    "background": "#aa2d130f",
+    "color": "#fff7d7aa",
+    "secondary_color": "#ffff8552"
+  },
+  "sprite": "create_rockets:banner",
+  "only_animate_on_hover": true
+}

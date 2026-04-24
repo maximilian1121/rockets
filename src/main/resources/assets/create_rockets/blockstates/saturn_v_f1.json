@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=down,part=base": { "model": "create_rockets:block/empty", "x": 180 },
+    "facing=down,part=extension": { "model": "create_rockets:block/empty", "x": 180 },
+    "facing=east,part=base": { "model": "create_rockets:block/empty", "x": 90, "y": 90 },
+    "facing=east,part=extension": { "model": "create_rockets:block/empty", "x": 90, "y": 90 },
+    "facing=north,part=base": { "model": "create_rockets:block/empty", "x": 90 },
+    "facing=north,part=extension": { "model": "create_rockets:block/empty", "x": 90 },
+    "facing=south,part=base": { "model": "create_rockets:block/empty", "x": 90, "y": 180 },
+    "facing=south,part=extension": { "model": "create_rockets:block/empty", "x": 90, "y": 180 },
+    "facing=up,part=base": { "model": "create_rockets:block/empty" },
+    "facing=up,part=extension": { "model": "create_rockets:block/empty" },
+    "facing=west,part=base": { "model": "create_rockets:block/empty", "x": 90, "y": 270 },
+    "facing=west,part=extension": { "model": "create_rockets:block/empty", "x": 90, "y": 270 }
+  }
+}

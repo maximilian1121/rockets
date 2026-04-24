@@ -1,0 +1,7 @@
+{
+  "thruster_sound": {
+    "sounds": [
+      "create_rockets:thruster_sound"
+    ]
+  }
+}
