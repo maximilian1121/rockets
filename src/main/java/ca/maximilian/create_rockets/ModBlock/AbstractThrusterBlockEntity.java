@@ -12,6 +12,8 @@ import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
 import dev.ryanhcode.sable.api.block.propeller.BlockEntitySubLevelPropellerActor;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.SubLevel;
+import ca.maximilian.create_rockets.client.sound.ThrusterSoundInstance;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -58,6 +60,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected float intensity = 0;
     protected PropellerActorBehaviour thrusterBehaviour;
     private boolean wasActiveLastTick;
+    private Object soundInstance;
     private int fuelTicksRemaining;
     private int fuelTicksTotal;
     protected AABB dmgBox;
@@ -176,10 +179,33 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 this.onActiveTick();
             } else {
                 this.spawnExhaustParticles();
+                this.tickThrusterSoundClient();
             }
         }
 
-        this.tickThrusterSound();
+        if (!level.isClientSide) {
+            this.tickThrusterSound();
+        }
+    }
+
+    protected void tickThrusterSoundClient() {
+        if (this.level == null || !this.level.isClientSide) return;
+
+        float throttle = this.getIntensity();
+        if (throttle > 0.01f && this.isActive()) {
+            if (this.soundInstance == null || ((ThrusterSoundInstance) this.soundInstance).isStopped()) {
+                this.soundInstance = new ThrusterSoundInstance(this);
+                Minecraft.getInstance().getSoundManager().play((ThrusterSoundInstance) this.soundInstance);
+            }
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (level != null && level.isClientSide && soundInstance != null) {
+            ((ThrusterSoundInstance) soundInstance).stopSound();
+        }
     }
 
     protected void onActiveTick() {
@@ -203,6 +229,16 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         final Direction direction = this.getBlockDirection();
+        final Vec3 directionVec = Vec3.atLowerCornerOf(direction.getNormal());
+        final Vec3 thrustOrigin = this.getBlockPos().getCenter();
+        final double forwardOffset = 3;
+        final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
+
+        final double reach = this.getThrusterStats().radius() * 2.5;
+        final double length = Math.max(0.0,
+                reach * 5 * ((float) this.getThrust() / (float) this.getThrusterStats().thrust()));
+        final double startRad = this.getThrusterStats().radius();
+        final double endRad = startRad + (length * 0.2);
 
         final AABB damageBox = computeDamageBox();
         dmgBox = damageBox;
@@ -214,13 +250,22 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         final Set<Entity> entitiesToDamage = new HashSet<>();
 
         if (subLevel == null) {
-            entitiesToDamage.addAll(this.level.getEntities(null, damageBox));
+            List<Entity> candidateEntities = this.level.getEntities(null, damageBox);
+            for (Entity entity : candidateEntities) {
+                if (isPointInCone(entity.position(), start, directionVec, length, startRad, endRad)) {
+                    entitiesToDamage.add(entity);
+                }
+            }
         } else {
             for (int lx = Mth.floor(damageBox.minX); lx <= Mth.floor(damageBox.maxX); lx++) {
                 for (int ly = Mth.floor(damageBox.minY); ly <= Mth.floor(damageBox.maxY); ly++) {
                     for (int lz = Mth.floor(damageBox.minZ); lz <= Mth.floor(damageBox.maxZ); lz++) {
-                        final Vec3 worldVec = Sable.HELPER.projectOutOfSubLevel(this.level,
-                                new Vec3(lx + 0.5, ly + 0.5, lz + 0.5));
+                        Vec3 localPos = new Vec3(lx + 0.5, ly + 0.5, lz + 0.5);
+                        if (!isPointInCone(localPos, start, directionVec, length, startRad, endRad)) {
+                            continue;
+                        }
+
+                        final Vec3 worldVec = Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
                         entitiesToDamage.addAll(outerLevel.getEntities(null, new AABB(
                                 worldVec.x - 0.75, worldVec.y - 0.75, worldVec.z - 0.75,
                                 worldVec.x + 0.75, worldVec.y + 0.75, worldVec.z + 0.75)));
@@ -243,12 +288,15 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             for (int lx = Mth.floor(damageBox.minX); lx <= Mth.floor(damageBox.maxX); lx++) {
                 for (int ly = Mth.floor(damageBox.minY); ly <= Mth.floor(damageBox.maxY); ly++) {
                     for (int lz = Mth.floor(damageBox.minZ); lz <= Mth.floor(damageBox.maxZ); lz++) {
+                        Vec3 localPos = new Vec3(lx + 0.5, ly + 0.5, lz + 0.5);
+                        if (!isPointInCone(localPos, start, directionVec, length, startRad, endRad)) {
+                            continue;
+                        }
 
                         if (random.nextFloat() > CreateRocketsConfigService.server.EVISCERATION_RATE.get() / 100f)
                             continue;
 
-                        final Vec3 worldVec = Sable.HELPER.projectOutOfSubLevel(this.level,
-                                new Vec3(lx + 0.5, ly + 0.5, lz + 0.5));
+                        final Vec3 worldVec = Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
                         BlockPos pos = BlockPos.containing(worldVec);
                         BlockPos below = pos.below();
 
@@ -336,16 +384,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                     this.getStartupSoundVolume(),
                     this.getStartupSoundPitch());
         }
-
-        float t = Mth.clamp(throttle, 0.0f, 1.0f);
-
-        float volume = Mth.clamp((float) Math.pow(t, 1.8f) * 1.4f, 0.0f, 1.4f);
-        float pitch = Mth.clamp(0.5f + (float) Math.pow(t, 2.2f) * 1.3f, 0.5f, 1.8f);
-
-        this.playThrusterSound(
-                this.getRunningSound(),
-                volume,
-                pitch);
 
         this.wasActiveLastTick = true;
     }
@@ -480,8 +518,16 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     private void updateIntensity() {
-        final float nextSpeed = this.hasFuel() ? this.getThrottle() : 0.0f;
-        this.intensity = Mth.lerp(0.15f, this.intensity, nextSpeed);
+        final float targetIntensity = this.hasFuel() ? this.getThrottle() : 0.0f;
+        if (targetIntensity > this.intensity) {
+            this.intensity = Mth.lerp(0.015f, this.intensity, targetIntensity);
+        } else {
+            this.intensity = Mth.lerp(0.02f, this.intensity, targetIntensity);
+        }
+    }
+
+    public float getPower() {
+        return this.getIntensity();
     }
 
     @Override
@@ -536,20 +582,39 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         final Vec3 thrustOrigin = this.getBlockPos().getCenter();
 
         final double forwardOffset = 3;
-        final double radOffset = 1d;
+        final double startRad = this.getThrusterStats().radius();
         final double length = Math.max(0.0,
-                reach * 5 * ((float) this.getThrust() / (float) this.getThrusterStats().thrust()));
+                reach * 8 * ((float) this.getThrust() / (float) this.getThrusterStats().thrust()));
+        final double endRad = startRad + (length * 0.2);
 
         final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
         final Vec3 end = start.add(directionVec.scale(length));
 
+        double maxRad = Math.max(startRad, endRad);
+
         return new AABB(
-                Math.min(start.x, end.x) - radOffset,
-                Math.min(start.y, end.y) - radOffset,
-                Math.min(start.z, end.z) - radOffset,
-                Math.max(start.x, end.x) + radOffset,
-                Math.max(start.y, end.y) + radOffset,
-                Math.max(start.z, end.z) + radOffset);
+                Math.min(start.x, end.x) - maxRad,
+                Math.min(start.y, end.y) - maxRad,
+                Math.min(start.z, end.z) - maxRad,
+                Math.max(start.x, end.x) + maxRad,
+                Math.max(start.y, end.y) + maxRad,
+                Math.max(start.z, end.z) + maxRad);
+    }
+
+    private boolean isPointInCone(Vec3 point, Vec3 start, Vec3 directionVec, double length, double startRad, double endRad) {
+        Vec3 toPoint = point.subtract(start);
+        double distForward = toPoint.dot(directionVec);
+
+        if (distForward < 0 || distForward > length) {
+            return false;
+        }
+
+        double progress = distForward / length;
+        double currentRad = Mth.lerp(progress, startRad, endRad);
+
+        Vec3 project = directionVec.scale(distForward);
+        Vec3 perp = toPoint.subtract(project);
+        return perp.x * perp.x + perp.y * perp.y + perp.z * perp.z <= currentRad * currentRad;
     }
 
     public float getIntensity() {

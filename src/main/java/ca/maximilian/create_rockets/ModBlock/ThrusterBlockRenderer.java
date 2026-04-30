@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -71,24 +72,59 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
         EntityRenderDispatcher dispatcher =  Minecraft.getInstance().getEntityRenderDispatcher();
 
         if (dispatcher.shouldRenderHitBoxes()) {
-            AABB box = be.getDmgBox();
-            if (box != null) {
-                VertexConsumer lineBuffer = buffer.getBuffer(RenderType.lines());
+            final Direction direction = be.getBlockDirection();
+            final Vec3 directionVec = Vec3.atLowerCornerOf(direction.getNormal());
+            final Vec3 thrustOrigin = be.getBlockPos().getCenter();
+            final double forwardOffset = 3;
+            final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
 
-                AABB localBox = box.move(
-                        -be.getBlockPos().getX(),
-                        -be.getBlockPos().getY(),
-                        -be.getBlockPos().getZ()
-                );
+            final double reach = be.getThrusterStats().radius() * 2.5;
+            final double length = Math.max(0.0,
+                    reach * 5 * ((float) be.getThrust() / (float) be.getThrusterStats().thrust()));
+            final double startRad = be.getThrusterStats().radius();
+            final double endRad = startRad + (length * 0.2);
 
-                LevelRenderer.renderLineBox(
-                        ms,
-                        lineBuffer,
-                        localBox,
-                        1.0F, 0.2F, 0.2F, 1.0F
-                );
-            }
+            VertexConsumer lineBuffer = buffer.getBuffer(RenderType.lines());
+
+            renderCone(ms, lineBuffer, start.subtract(Vec3.atLowerCornerOf(be.getBlockPos())), directionVec, length, startRad, endRad, 1.0F, 0.2F, 0.2F, 1.0F);
         }
+    }
+
+    private void renderCone(PoseStack ms, VertexConsumer buffer, Vec3 start, Vec3 dir, double length, double startRad, double endRad, float r, float g, float b, float a) {
+        Vec3 end = start.add(dir.scale(length));
+
+        Vec3 axis1;
+        if (Math.abs(dir.x) < 0.9) {
+            axis1 = dir.cross(new Vec3(1, 0, 0)).normalize();
+        } else {
+            axis1 = dir.cross(new Vec3(0, 1, 0)).normalize();
+        }
+        Vec3 axis2 = dir.cross(axis1).normalize();
+
+        int segments = 16;
+        for (int i = 0; i < segments; i++) {
+            double angle1 = (i * 2 * Math.PI) / segments;
+            double angle2 = ((i + 1) * 2 * Math.PI) / segments;
+
+            Vec3 s1 = start.add(axis1.scale(Math.cos(angle1) * startRad)).add(axis2.scale(Math.sin(angle1) * startRad));
+            Vec3 s2 = start.add(axis1.scale(Math.cos(angle2) * startRad)).add(axis2.scale(Math.sin(angle2) * startRad));
+            Vec3 e1 = end.add(axis1.scale(Math.cos(angle1) * endRad)).add(axis2.scale(Math.sin(angle1) * endRad));
+            Vec3 e2 = end.add(axis1.scale(Math.cos(angle2) * endRad)).add(axis2.scale(Math.sin(angle2) * endRad));
+
+            line(ms, buffer, s1, s2, r, g, b, a);
+            line(ms, buffer, e1, e2, r, g, b, a);
+            line(ms, buffer, s1, e1, r, g, b, a);
+        }
+    }
+
+    private void line(PoseStack ms, VertexConsumer buffer, Vec3 p1, Vec3 p2, float r, float g, float b, float a) {
+        PoseStack.Pose pose = ms.last();
+        buffer.addVertex(pose.pose(), (float) p1.x, (float) p1.y, (float) p1.z)
+                .setColor(r, g, b, a)
+                .setNormal(pose, 0, 1, 0);
+        buffer.addVertex(pose.pose(), (float) p2.x, (float) p2.y, (float) p2.z)
+                .setColor(r, g, b, a)
+                .setNormal(pose, 0, 1, 0);
     }
 
     @Override
