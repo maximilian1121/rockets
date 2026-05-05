@@ -5,21 +5,22 @@ import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateRocketsPonderPlugin extends CreatePonderPlugin {
 
     @Override
-    public String getModId() {
+    public @NotNull String getModId() {
         return CreateRockets.MODID;
     }
 
     @Override
-    public void registerScenes(final PonderSceneRegistrationHelper<ResourceLocation> helper) {
+    public void registerScenes(final @NotNull PonderSceneRegistrationHelper<ResourceLocation> helper) {
         CreateRocketsPonderScenes.register(helper);
     }
 
     @Override
-    public void registerTags(final PonderTagRegistrationHelper<ResourceLocation> helper) {
+    public void registerTags(final @NotNull PonderTagRegistrationHelper<ResourceLocation> helper) {
         CreateRocketsPonderTags.register(helper);
     }
 }

@@ -44,8 +44,8 @@ public class ThrusterSoundInstance extends AbstractTickableSoundInstance {
     }
 
     private void updatePosition() {
-        this.x = (double)((float)this.blockEntity.getBlockPos().getX() + 0.5F);
-        this.y = (double)((float)this.blockEntity.getBlockPos().getY() + 0.5F);
-        this.z = (double)((float)this.blockEntity.getBlockPos().getZ() + 0.5F);
+        this.x = this.blockEntity.getBlockPos().getX() + 0.5F;
+        this.y = this.blockEntity.getBlockPos().getY() + 0.5F;
+        this.z = this.blockEntity.getBlockPos().getZ() + 0.5F;
     }
 }

@@ -1,6 +1,7 @@
 package ca.maximilian.create_rockets.ModBlock;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum ThrusterType implements StringRepresentable {
     RAPTOR_3("raptor_3", new ThrusterStats(100, 120, 1.5f, 1)),
@@ -19,7 +20,7 @@ public enum ThrusterType implements StringRepresentable {
     }
 
     @Override
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return name;
     }
 

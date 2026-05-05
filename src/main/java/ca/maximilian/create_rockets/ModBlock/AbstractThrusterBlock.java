@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -62,7 +61,7 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     }
 
     @Override
-    public int getLightEmission(@NotNull BlockState state, BlockGetter level, @NotNull BlockPos pos) {
+    public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         if (this.getBaseBlockEntity(level, state, pos) instanceof AbstractThrusterBlockEntity be) {
             return be.isActive() ? 15 : 0;
         }
@@ -219,9 +218,4 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         return pos.relative(this.getAttachedDirection(state));
     }
 
-    @Override
-    public abstract Class<T> getBlockEntityClass();
-
-    @Override
-    public abstract BlockEntityType<? extends T> getBlockEntityType();
 }

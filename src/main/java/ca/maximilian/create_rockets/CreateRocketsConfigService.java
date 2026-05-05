@@ -12,9 +12,11 @@ import java.util.function.Supplier;
 
 public class CreateRocketsConfigService {
 
-    public static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
+    private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
     public static Config server;
+
+    private CreateRocketsConfigService() {}
 
     private static <T extends ConfigBase> T register(Supplier<T> factory, ModConfig.Type type) {
         Pair<T, ModConfigSpec> pair = new ModConfigSpec.Builder().configure(builder -> {
@@ -31,7 +33,7 @@ public class CreateRocketsConfigService {
     }
 
     public static void register(ModContainer container) {
-        server = CreateRocketsConfigService.<Config>register(
+        server = CreateRocketsConfigService.register(
                 Config::new,
                 ModConfig.Type.SERVER
         );

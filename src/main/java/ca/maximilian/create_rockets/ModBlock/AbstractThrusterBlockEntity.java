@@ -28,6 +28,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -40,9 +42,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,7 +88,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             }
 
             @Override
-            public boolean isItemValid(final int slot, final ItemStack stack) {
+            public boolean isItemValid(final int slot, final @NotNull ItemStack stack) {
                 return slot == FUEL_SLOT && getCustomBurnTime(stack) > 0;
             }
         };
@@ -106,8 +108,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             @Override
             public void set(final int index, final int value) {
                 switch (index) {
-                    case 0 -> {
-                    }
                     case 1 -> fuelTicksRemaining = value;
                     case 2 -> fuelTicksTotal = value;
                     default -> {
@@ -183,7 +183,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             }
         }
 
-        if (!level.isClientSide) {
+        if (level != null && !level.isClientSide) {
             this.tickThrusterSound();
         }
     }
@@ -281,7 +281,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             }
         }
 
-        if (CreateRocketsConfigService.server.EVISCERATION.get()) {
+        if (CreateRocketsConfigService.server.evisceration.get()) {
 
             final RandomSource random = outerLevel.random;
 
@@ -293,7 +293,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                             continue;
                         }
 
-                        if (random.nextFloat() > CreateRocketsConfigService.server.EVISCERATION_RATE.get() / 100f)
+                        if (random.nextFloat() > CreateRocketsConfigService.server.eviscerationRate.get() / 100f)
                             continue;
 
                         final Vec3 worldVec = Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
@@ -662,14 +662,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         return Component.translatable(this.getBlockState().getBlock().getDescriptionId());
     }
 
     @Override
     public ThrusterFuelMenu createMenu(final int containerId,
-            final net.minecraft.world.entity.player.Inventory playerInventory,
-            final net.minecraft.world.entity.player.Player player) {
+            final @NotNull Inventory playerInventory,
+            final @NotNull Player player) {
         return ThrusterFuelMenu.forBlockEntity(containerId, playerInventory, this);
     }
 
@@ -686,24 +686,24 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         @Override
-        public ItemStack getItem(final int slot) {
+        public @NotNull ItemStack getItem(final int slot) {
             return fuelInventory.getStackInSlot(slot);
         }
 
         @Override
-        public ItemStack removeItem(final int slot, final int amount) {
+        public @NotNull ItemStack removeItem(final int slot, final int amount) {
             return fuelInventory.extractItem(slot, amount, false);
         }
 
         @Override
-        public ItemStack removeItemNoUpdate(final int slot) {
+        public @NotNull ItemStack removeItemNoUpdate(final int slot) {
             final ItemStack existing = fuelInventory.getStackInSlot(FUEL_SLOT);
             fuelInventory.setStackInSlot(FUEL_SLOT, ItemStack.EMPTY);
             return existing;
         }
 
         @Override
-        public void setItem(final int slot, final ItemStack stack) {
+        public void setItem(final int slot, final @NotNull ItemStack stack) {
             fuelInventory.setStackInSlot(slot, stack);
         }
 
@@ -713,14 +713,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         @Override
-        public boolean stillValid(final net.minecraft.world.entity.player.Player player) {
+        public boolean stillValid(final @NotNull Player player) {
             return level != null
                     && level.getBlockEntity(worldPosition) == AbstractThrusterBlockEntity.this
                     && player.canInteractWithBlock(worldPosition, 4.0);
         }
 
         @Override
-        public boolean canPlaceItem(final int slot, final ItemStack stack) {
+        public boolean canPlaceItem(final int slot, final @NotNull ItemStack stack) {
             return fuelInventory.isItemValid(slot, stack);
         }
 
@@ -738,12 +738,12 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         @Override
-        public ItemStack getStackInSlot(final int slot) {
+        public @NotNull ItemStack getStackInSlot(final int slot) {
             return fuelInventory.getStackInSlot(slot);
         }
 
         @Override
-        public ItemStack insertItem(final int slot, final ItemStack stack, final boolean simulate) {
+        public @NotNull ItemStack insertItem(final int slot, final @NotNull ItemStack stack, final boolean simulate) {
             if (!fuelInventory.isItemValid(slot, stack)) {
                 return stack;
             }
@@ -752,7 +752,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         @Override
-        public ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
+        public @NotNull ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
             return fuelInventory.extractItem(slot, amount, simulate);
         }
 
@@ -762,7 +762,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         @Override
-        public boolean isItemValid(final int slot, final ItemStack stack) {
+        public boolean isItemValid(final int slot, final @NotNull ItemStack stack) {
             return fuelInventory.isItemValid(slot, stack);
         }
     }
