@@ -1,5 +1,6 @@
 package ca.maximilian.create_rockets.ModBlock;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.foundation.block.IBE;
 import net.createmod.catnip.math.VoxelShaper;
@@ -10,14 +11,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -30,7 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntity> extends Block implements IBE<T> {
+public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntity> extends Block implements IBE<T>, IWrenchable {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty REVERSED = BooleanProperty.create("reversed");
@@ -157,6 +156,15 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
 
     @Override
     public void onRemove(final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState newState, final boolean isMoving) {
+        var counterPartPosition = this.getCounterpartPos(state, pos);
+
+        // Destroys other block
+        level.destroyBlock(counterPartPosition, false);
+
+        // Ensures to drop fuel inventory
+        dropFuelInventory(level, pos);
+        dropFuelInventory(level, counterPartPosition);
+
         if (!isMoving && state.hasBlockEntity() && (state.getBlock() != newState.getBlock() || !newState.hasBlockEntity())) {
             final T blockEntity = this.getBlockEntity(level, pos);
             if (blockEntity != null) {
@@ -167,17 +175,9 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         IBE.onRemove(state, level, pos, newState);
     }
 
-    @Override
-    public @NotNull BlockState playerWillDestroy(final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState state, final net.minecraft.world.entity.player.@NotNull Player player) {
-        final BlockPos counterpartPos = this.getCounterpartPos(state, pos);
-        final BlockState counterpartState = level.getBlockState(counterpartPos);
-        if (counterpartState.is(this)
-                && counterpartState.getValue(PART) != state.getValue(PART)
-                && counterpartState.getValue(FACING) == state.getValue(FACING)) {
-            level.setBlock(counterpartPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
-        }
-
-        return super.playerWillDestroy(level, pos, state, player);
+    private void dropFuelInventory(@NotNull Level level, @NotNull BlockPos pos) {
+        var blockEntity = this.getBlockEntity(level, pos);
+        if (blockEntity != null) blockEntity.dropFuelInventory();
     }
 
     @Override
@@ -217,6 +217,11 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
 
     private BlockPos getCounterpartPos(final BlockState state, final BlockPos pos) {
         return pos.relative(this.getAttachedDirection(state));
+    }
+
+    @Override
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        return InteractionResult.FAIL;
     }
 
     @Override
