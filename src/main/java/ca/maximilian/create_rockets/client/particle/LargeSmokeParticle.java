@@ -112,8 +112,8 @@ public class LargeSmokeParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(SimpleParticleType type,
-                                       ClientLevel level,
+        public Particle createParticle(@NotNull SimpleParticleType type,
+                                       @NotNull ClientLevel level,
                                        double x, double y, double z,
                                        double dx, double dy, double dz) {
             return new LargeSmokeParticle(level, x, y, z, dx, dy, dz, this.spriteSet);

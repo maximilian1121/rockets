@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ThrusterFuelMenu extends AbstractContainerMenu {
 
@@ -54,7 +55,7 @@ public class ThrusterFuelMenu extends AbstractContainerMenu {
 
         this.addSlot(new Slot(fuelContainer, 0, 80, 35) {
             @Override
-            public boolean mayPlace(final ItemStack stack) {
+            public boolean mayPlace(final @NotNull ItemStack stack) {
                 return fuelContainer.canPlaceItem(0, stack);
             }
         });
@@ -71,12 +72,12 @@ public class ThrusterFuelMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(final Player player) {
+    public boolean stillValid(final @NotNull Player player) {
         return this.fuelContainer.stillValid(player);
     }
 
     @Override
-    public ItemStack quickMoveStack(final Player player, final int index) {
+    public @NotNull ItemStack quickMoveStack(final @NotNull Player player, final int index) {
         ItemStack moved = ItemStack.EMPTY;
         final Slot slot = this.slots.get(index);
         if (!slot.hasItem()) {
@@ -104,7 +105,7 @@ public class ThrusterFuelMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void removed(final Player player) {
+    public void removed(final @NotNull Player player) {
         super.removed(player);
         this.fuelContainer.stopOpen(player);
     }

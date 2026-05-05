@@ -13,6 +13,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.lang.reflect.Field;
+
 public final class ThrusterPonderScenes {
 
     private ThrusterPonderScenes() {
@@ -55,7 +57,7 @@ public final class ThrusterPonderScenes {
             be.setSignal(15);
 
             try {
-                java.lang.reflect.Field field = ThrottleLeverBlockEntity.class.getDeclaredField("clientAngle");
+                Field field = ThrottleLeverBlockEntity.class.getDeclaredField("clientAngle");
                 field.setAccessible(true);
                 LerpedFloat clientAngle = (LerpedFloat) field.get(be);
 
@@ -72,7 +74,7 @@ public final class ThrusterPonderScenes {
                 be -> {
                     be.getFuelContainer().setItem(0, new ItemStack(Items.COAL, 64));
                     try {
-                        java.lang.reflect.Field field = AbstractThrusterBlockEntity.class.getDeclaredField("intensity");
+                        Field field = AbstractThrusterBlockEntity.class.getDeclaredField("intensity");
                         field.setAccessible(true);
                         field.set(be, 1.0f);
                     } catch (Exception e) {

@@ -17,7 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -61,7 +60,7 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     }
 
     @Override
-    public int getLightEmission(@NotNull BlockState state, BlockGetter level, @NotNull BlockPos pos) {
+    public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         if (this.getBaseBlockEntity(level, state, pos) instanceof AbstractThrusterBlockEntity be) {
             return be.isActive() ? 15 : 0;
         }
@@ -224,9 +223,4 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         return InteractionResult.FAIL;
     }
 
-    @Override
-    public abstract Class<T> getBlockEntityClass();
-
-    @Override
-    public abstract BlockEntityType<? extends T> getBlockEntityType();
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class ThrusterFuelScreen extends AbstractContainerScreen<ThrusterFuelMenu> {
 
@@ -66,7 +67,7 @@ public class ThrusterFuelScreen extends AbstractContainerScreen<ThrusterFuelMenu
     }
 
     @Override
-    protected void renderLabels(final GuiGraphics guiGraphics, final int mouseX, final int mouseY) {
+    protected void renderLabels(final @NotNull GuiGraphics guiGraphics, final int mouseX, final int mouseY) {
         super.renderLabels(guiGraphics, mouseX, mouseY);
         final Component fuelLabel = Component.literal("Fuel");
         guiGraphics.drawString(this.font, fuelLabel, (this.imageWidth - this.font.width(fuelLabel)) / 2, 22, 0x404040, false);
