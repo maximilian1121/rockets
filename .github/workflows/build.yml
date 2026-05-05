@@ -43,7 +43,7 @@ jobs:
       - name: 🏷️ Patch mod version
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          sed -i "s/^mod_version=.*/mod_version=DEV-${SHORT_SHA}/" gradle.properties
+          sed -i "s/^mod_version=.*/mod_version=0.0.0-dev-${SHORT_SHA}/" gradle.properties
 
       - name: 🏗️ Build with Gradle
         run: ./gradlew build
