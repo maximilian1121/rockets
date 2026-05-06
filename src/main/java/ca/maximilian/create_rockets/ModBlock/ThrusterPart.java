@@ -1,20 +1,15 @@
 package ca.maximilian.create_rockets.ModBlock;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.util.StringRepresentable;
-import org.jetbrains.annotations.NotNull;
 
+@Getter
+@RequiredArgsConstructor
 public enum ThrusterPart implements StringRepresentable {
     BASE("base"),
     EXTENSION("extension");
 
-    private final String name;
+    private final String serializedName;
 
-    ThrusterPart(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public @NotNull String getSerializedName() {
-        return this.name;
-    }
 }

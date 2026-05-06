@@ -1,14 +1,18 @@
 package ca.maximilian.create_rockets.ModBlock;
 
+import lombok.experimental.UtilityClass;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
+@UtilityClass
 public final class ThrusterShapes {
 
     public static final VoxelShaper RAPTOR_3_BASE = shape(0, 0, 0, 16, 5, 16) // Plate (Element 5)
@@ -87,11 +91,9 @@ public final class ThrusterShapes {
             .add(2, 12, 2, 14, 13, 14) // (34)
             .forDirectional(Direction.UP);
 
-    private ThrusterShapes() {
-    }
-
-    public static Builder shape(final double x1, final double y1, final double z1,
-                                final double x2, final double y2, final double z2) {
+    @Contract("_, _, _, _, _, _ -> new")
+    public static @NotNull Builder shape(final double x1, final double y1, final double z1,
+                                         final double x2, final double y2, final double z2) {
         return new Builder(Block.box(x1, y1, z1, x2, y2, z2));
     }
 

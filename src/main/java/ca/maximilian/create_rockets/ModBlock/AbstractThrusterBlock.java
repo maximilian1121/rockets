@@ -34,6 +34,7 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     public static final BooleanProperty REVERSED = BooleanProperty.create("reversed");
     public static final EnumProperty<ThrusterPart> PART = EnumProperty.create("part", ThrusterPart.class);
     public static final EnumProperty<ThrusterType> TYPE = EnumProperty.create("type", ThrusterType.class);
+
     private final VoxelShaper baseShape;
     private final VoxelShaper extensionShape;
 
@@ -48,14 +49,14 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
                 .setValue(TYPE, ThrusterType.RAPTOR_3));
     }
 
-    public Direction getAttachedDirection(final BlockState state) {
+    public Direction getAttachedDirection(final @NotNull BlockState state) {
         return state.getValue(PART) == ThrusterPart.BASE
                 ? state.getValue(FACING)
                 : state.getValue(FACING).getOpposite();
     }
 
     @Override
-    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(final StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(FACING, REVERSED, PART, TYPE);
     }
 
@@ -68,7 +69,7 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     }
 
     @Override
-    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+    public BlockState getStateForPlacement(final @NotNull BlockPlaceContext context) {
         // Default to pointing away from the player
         Direction facing = context.getNearestLookingDirection().getOpposite();
 
@@ -100,13 +101,13 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     }
 
     @Override
-    public @NotNull VoxelShape getShape(final BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
+    public @NotNull VoxelShape getShape(final @NotNull BlockState state, final @NotNull BlockGetter level, final @NotNull BlockPos pos, final @NotNull CollisionContext context) {
         return (state.getValue(PART) == ThrusterPart.BASE ? this.baseShape : this.extensionShape).get(state.getValue(FACING));
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(
-            final @NotNull BlockState state, final Level level, final @NotNull BlockPos pos,
+            final @NotNull BlockState state, final @NotNull Level level, final @NotNull BlockPos pos,
             final net.minecraft.world.entity.player.@NotNull Player player, final @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
@@ -197,16 +198,16 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
     }
 
     @Override
-    public @NotNull BlockState rotate(BlockState state, Rotation rot) {
+    public @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState state, @NotNull Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    public BlockPos getBasePos(final BlockState state, final BlockPos pos) {
+    public BlockPos getBasePos(final @NotNull BlockState state, final BlockPos pos) {
         return state.getValue(PART) == ThrusterPart.BASE ? pos : pos.relative(state.getValue(FACING).getOpposite());
     }
 
@@ -214,7 +215,7 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         return this.getBlockEntity(level, this.getBasePos(state, pos));
     }
 
-    private BlockPos getCounterpartPos(final BlockState state, final BlockPos pos) {
+    private @NotNull BlockPos getCounterpartPos(final BlockState state, final @NotNull BlockPos pos) {
         return pos.relative(this.getAttachedDirection(state));
     }
 

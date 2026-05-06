@@ -4,6 +4,7 @@ import ca.maximilian.create_rockets.CreateRocketsPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
+import lombok.RequiredArgsConstructor;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.Minecraft;
@@ -20,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 
+@RequiredArgsConstructor
 public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrusterBlockEntity> {
 
-    public ThrusterBlockRenderer(final BlockEntityRendererProvider.Context context) {
-    }
+    private final BlockEntityRendererProvider.Context renderContext;
 
     @Override
-    protected void renderSafe(AbstractThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                               int light, int overlay) {
+    protected void renderSafe(@NotNull AbstractThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+                              int light, int overlay) {
 
         if (be.getLevel() == null) return;
 
@@ -88,7 +89,7 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
         }
     }
 
-    private void renderCone(PoseStack ms, VertexConsumer buffer, Vec3 start, Vec3 dir, double length, double startRad, double endRad, float r, float g, float b, float a) {
+    private void renderCone(PoseStack ms, VertexConsumer buffer, @NotNull Vec3 start, @NotNull Vec3 dir, double length, double startRad, double endRad, float r, float g, float b, float a) {
         Vec3 end = start.add(dir.scale(length));
 
         Vec3 axis1;
@@ -115,7 +116,7 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
         }
     }
 
-    private void line(PoseStack ms, VertexConsumer buffer, Vec3 p1, Vec3 p2, float r, float g, float b, float a) {
+    private void line(@NotNull PoseStack ms, @NotNull VertexConsumer buffer, @NotNull Vec3 p1, @NotNull Vec3 p2, float r, float g, float b, float a) {
         PoseStack.Pose pose = ms.last();
         buffer.addVertex(pose.pose(), (float) p1.x, (float) p1.y, (float) p1.z)
                 .setColor(r, g, b, a)
@@ -135,7 +136,7 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
         return 128;
     }
 
-    private static @NotNull Quaternionf getRot(Direction dir) {
+    private static @NotNull Quaternionf getRot(@NotNull Direction dir) {
         Direction exhaustDir = dir.getOpposite();
         Quaternionf rot = new Quaternionf();
 
