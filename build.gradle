@@ -4,6 +4,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
     id 'io.freefair.lombok' version '9.5.0'
+    id 'checkstyle'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -228,4 +229,8 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+checkstyle {
+    toolVersion = '13.4.2'
 }
