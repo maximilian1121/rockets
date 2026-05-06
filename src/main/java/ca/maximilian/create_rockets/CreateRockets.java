@@ -1,6 +1,9 @@
 package ca.maximilian.create_rockets;
 
 import ca.maximilian.create_rockets.client.CreateRocketsClient;
+import ca.maximilian.create_rockets.datagen.ModBlockLootProvider;
+import ca.maximilian.create_rockets.datagen.ModBlockTagsProvider;
+import ca.maximilian.create_rockets.datagen.ModRecipeProvider;
 import ca.maximilian.create_rockets.index.*;
 import ca.maximilian.create_rockets.ModBlock.AbstractThrusterBlock;
 import com.simibubi.create.api.contraption.BlockMovementChecks;
@@ -24,11 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod(CreateRockets.MODID)
+@Mod(Constants.MOD_ID)
 public class CreateRockets {
-
-    public static final String MODID = "create_rockets";
-    public static final ResourceLocation TAB_SECTION = path("create_rockets");
 
     public CreateRockets(IEventBus eventBus, ModContainer container) {
         CreateRocketsBlocks.BLOCKS.register(eventBus);
@@ -59,8 +59,8 @@ public class CreateRockets {
         event.enqueueWork(() -> {
             SimulatedRegistrate.TAB_ITEMS.add(CreateRocketsItems.RAPTOR_3::get);
             SimulatedRegistrate.TAB_ITEMS.add(CreateRocketsItems.SATURN_V_F1::get);
-            SimulatedRegistrate.ITEM_TO_SECTION.put(path("raptor_3"), TAB_SECTION);
-            SimulatedRegistrate.ITEM_TO_SECTION.put(path("saturn_v_f1"), TAB_SECTION);
+            SimulatedRegistrate.ITEM_TO_SECTION.put(path("raptor_3"), Constants.TAB_SECTION);
+            SimulatedRegistrate.ITEM_TO_SECTION.put(path("saturn_v_f1"), Constants.TAB_SECTION);
         });
     }
 
@@ -80,6 +80,6 @@ public class CreateRockets {
     }
 
     public static ResourceLocation path(final String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, path);
     }
 }

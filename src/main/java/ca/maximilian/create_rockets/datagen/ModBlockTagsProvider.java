@@ -1,5 +1,6 @@
-package ca.maximilian.create_rockets;
+package ca.maximilian.create_rockets.datagen;
 
+import ca.maximilian.create_rockets.Constants;
 import ca.maximilian.create_rockets.index.CreateRocketsBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -13,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class ModBlockTagsProvider extends BlockTagsProvider {
 
     public ModBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, CreateRockets.MODID, existingFileHelper);
+        super(output, lookupProvider, Constants.MOD_ID, existingFileHelper);
     }
 
     @Override

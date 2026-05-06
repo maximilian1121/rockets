@@ -1,4 +1,4 @@
-package ca.maximilian.create_rockets;
+package ca.maximilian.create_rockets.datagen;
 
 import ca.maximilian.create_rockets.index.CreateRocketsItems;
 import net.minecraft.core.HolderLookup;

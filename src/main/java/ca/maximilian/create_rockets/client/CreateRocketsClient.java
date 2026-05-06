@@ -1,5 +1,6 @@
 package ca.maximilian.create_rockets.client;
 
+import ca.maximilian.create_rockets.Constants;
 import ca.maximilian.create_rockets.ModBlock.ThrusterBlockRenderer;
 import ca.maximilian.create_rockets.client.ponder.CreateRocketsPonderPlugin;
 import ca.maximilian.create_rockets.index.CreateRocketsItems;
@@ -26,7 +27,7 @@ public final class CreateRocketsClient {
     }
 
     public static void register(final IEventBus modEventBus, ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, (client, parent) -> new BaseConfigScreen(parent, CreateRockets.MODID));
+        container.registerExtensionPoint(IConfigScreenFactory.class, (client, parent) -> new BaseConfigScreen(parent, Constants.MOD_ID));
 
         CreateRocketsPartialModels.init();
         modEventBus.addListener(CreateRocketsClient::onClientSetup);
@@ -42,7 +43,7 @@ public final class CreateRocketsClient {
                     new ItemDescription.Modifier(CreateRocketsItems.RAPTOR_3.get(), FontHelper.Palette.STANDARD_CREATE)
             );
             NewPonderTooltipManager.forItems(CreateRocketsItems.RAPTOR_3.get())
-                    .addScenes(ca.maximilian.create_rockets.CreateRockets.path("thruster"));
+                    .addScenes(CreateRockets.path("thruster"));
             PonderIndex.addPlugin(new CreateRocketsPonderPlugin());
         });
     }

@@ -1,6 +1,6 @@
 package ca.maximilian.create_rockets.client.ponder;
 
-import ca.maximilian.create_rockets.CreateRockets;
+import ca.maximilian.create_rockets.Constants;
 import com.simibubi.create.foundation.ponder.CreatePonderPlugin;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
@@ -11,7 +11,7 @@ public class CreateRocketsPonderPlugin extends CreatePonderPlugin {
 
     @Override
     public @NotNull String getModId() {
-        return CreateRockets.MODID;
+        return Constants.MOD_ID;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ca.maximilian.create_rockets;
 
+import lombok.experimental.UtilityClass;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -10,13 +11,12 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+@UtilityClass
 public class CreateRocketsConfigService {
 
     private static final Map<ModConfig.Type, ConfigBase> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 
     public static Config server;
-
-    private CreateRocketsConfigService() {}
 
     private static <T extends ConfigBase> T register(Supplier<T> factory, ModConfig.Type type) {
         Pair<T, ModConfigSpec> pair = new ModConfigSpec.Builder().configure(builder -> {
