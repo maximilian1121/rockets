@@ -25,5 +25,6 @@
   "create_rockets.jade.thrust": "Thrust",
   "create_rockets.jade.airflow": "Airflow",
   "create_rockets.ponder.thruster.header": "Thrusters",
-  "create_rockets.ponder.thruster.text_1": "Thrusters require fuel and redstone to operate"
+  "create_rockets.ponder.thruster.text_1": "Thrusters require fuel and redstone to operate",
+  "create_rockets.ponder.thruster.text_2": "The thruster will continue to fire as long as it has fuel and power and burns out when fuel is empty"
 }

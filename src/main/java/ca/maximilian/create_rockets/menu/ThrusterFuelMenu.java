@@ -2,6 +2,7 @@ package ca.maximilian.create_rockets.menu;
 
 import ca.maximilian.create_rockets.ModBlock.AbstractThrusterBlockEntity;
 import ca.maximilian.create_rockets.index.CreateRocketsMenus;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -25,6 +26,7 @@ public class ThrusterFuelMenu extends AbstractContainerMenu {
 
     private final Container fuelContainer;
     private final ContainerData data;
+    @Getter
     private final BlockPos blockPos;
 
     public ThrusterFuelMenu(final int containerId, final Inventory playerInventory, final RegistryFriendlyByteBuf extraData) {
@@ -124,10 +126,6 @@ public class ThrusterFuelMenu extends AbstractContainerMenu {
 
     public int getFuelTicksTotal() {
         return this.data.get(2);
-    }
-
-    public BlockPos getBlockPos() {
-        return this.blockPos;
     }
 
     public static ThrusterFuelMenu forBlockEntity(
