@@ -18,6 +18,7 @@
   "item.create_rockets.saturn_v_f1.tooltip.control3": "Exhaust",
   "item.create_rockets.saturn_v_f1.tooltip.action3": "Ignites entities and damages blocks in front of the nozzle, so keep the plume clear.",
   "create_rockets.simulated_section.create_rockets": "Create Rockets",
+  "config.jade.plugin_create_rockets.thruster": "Create Rockets",
   "create_rockets.jade.thruster": "Thruster",
   "create_rockets.jade.burn_time": "Burn Time: %s",
   "create_rockets.jade.no_fuel": "No Fuel",
