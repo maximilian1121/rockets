@@ -237,6 +237,15 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
     }
 
+    @Override
+    public double getScaledThrust() {
+        double pressure = this.getCurrentAirPressure();
+
+        double stretchedPressure = Math.min(1.0, pressure * 4.0);
+
+        return -this.getThrust() * this.getAirflowScaling() * stretchedPressure;
+    }
+
     protected void onActiveTick() {
         this.pushEntitiesWithFire();
         if (this.thrusterBehaviour != null) {
