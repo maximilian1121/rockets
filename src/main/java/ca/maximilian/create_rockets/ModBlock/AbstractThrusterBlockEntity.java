@@ -1,8 +1,10 @@
 package ca.maximilian.create_rockets.ModBlock;
 
 import ca.maximilian.create_rockets.CreateRocketsConfigService;
+import ca.maximilian.create_rockets.client.sound.ThrusterSoundInstance;
 import ca.maximilian.create_rockets.index.CreateRocketsSounds;
 import ca.maximilian.create_rockets.menu.ThrusterFuelMenu;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
@@ -12,11 +14,12 @@ import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
 import dev.ryanhcode.sable.api.block.propeller.BlockEntitySubLevelPropellerActor;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import ca.maximilian.create_rockets.client.sound.ThrusterSoundInstance;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -54,18 +57,25 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     private static final int FUEL_SLOT = 0;
     private static final float FUEL_CONSUMPTION_MULTIPLIER = 2.0f;
-    private final Quaternionf rotation = new Quaternionf();
+
     protected final ItemStackHandler fuelInventory;
     protected final IItemHandler backFuelHandler;
+    @Getter
     protected final Container fuelContainer;
+    @Getter
     protected final ContainerData menuData;
+    @Getter
     protected float intensity = 0;
     protected PropellerActorBehaviour thrusterBehaviour;
+    protected AABB dmgBox;
+
+    private final Quaternionf rotation = new Quaternionf();
     private boolean wasActiveLastTick;
     private Object soundInstance;
+    @Getter
     private int fuelTicksRemaining;
+    @Getter
     private int fuelTicksTotal;
-    protected AABB dmgBox;
 
     protected AbstractThrusterBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
@@ -74,8 +84,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             protected void onContentsChanged(final int slot) {
                 if (fuelTicksRemaining == Integer.MAX_VALUE) {
                     ItemStack current = getStackInSlot(slot);
-                    boolean isCreative = !current.isEmpty() && net.minecraft.core.registries.BuiltInRegistries.ITEM
-                            .getKey(current.getItem()).toString().equals("create:creative_blaze_cake");
+
+                    boolean isCreative = !current.isEmpty() && BuiltInRegistries.ITEM
+                            .getKey(current.getItem()).equals(AllItems.CREATIVE_BLAZE_CAKE.getId());
+
                     if (!isCreative) {
                         fuelTicksRemaining = 0;
                         fuelTicksTotal = 0;
@@ -123,7 +135,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     public static void registerCapabilities(final RegisterCapabilitiesEvent event,
-            final BlockEntityType<? extends AbstractThrusterBlockEntity> type) {
+                                            final BlockEntityType<? extends AbstractThrusterBlockEntity> type) {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 type,
@@ -192,12 +204,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (this.level == null || !this.level.isClientSide) return;
 
         float throttle = this.getIntensity();
-        if (throttle > 0.01f && this.isActive()) {
-            if (this.soundInstance == null || ((ThrusterSoundInstance) this.soundInstance).isStopped()) {
-                this.soundInstance = new ThrusterSoundInstance(this);
-                Minecraft.getInstance().getSoundManager().play((ThrusterSoundInstance) this.soundInstance);
-            }
+        if (throttle > 0.01f && this.isActive() && (this.soundInstance == null || ((ThrusterSoundInstance) this.soundInstance).isStopped())) {
+            this.soundInstance = new ThrusterSoundInstance(this);
+            Minecraft.getInstance().getSoundManager().play((ThrusterSoundInstance) this.soundInstance);
         }
+
     }
 
     @Override
@@ -303,7 +314,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                         if (outerLevel.isEmptyBlock(pos)
                                 && outerLevel.getBlockState(below).isSolidRender(outerLevel, below)
                                 && net.minecraft.world.level.block.BaseFireBlock.canBePlacedAt(outerLevel, pos,
-                                        direction)) {
+                                direction)) {
 
                             outerLevel.setBlock(pos, net.minecraft.world.level.block.Blocks.FIRE.defaultBlockState(),
                                     11);
@@ -423,7 +434,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (standard > 0)
             return standard;
 
-        String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
         if (id.equals("create:blaze_cake")) {
             return 6400;
         }
@@ -435,14 +446,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     protected boolean hasFuel() {
         return this.fuelTicksRemaining > 0;
-    }
-
-    public int getFuelTicksRemaining() {
-        return this.fuelTicksRemaining;
-    }
-
-    public int getFuelTicksTotal() {
-        return this.fuelTicksTotal;
     }
 
     protected int getRedstoneSignal() {
@@ -490,7 +493,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             return;
         }
 
-        boolean isCreative = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
+        boolean isCreative = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()
                 .equals("create:creative_blaze_cake");
 
         if (!isCreative) {
@@ -532,7 +535,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     @Override
     protected void write(final CompoundTag compound, final HolderLookup.Provider registries,
-            final boolean clientPacket) {
+                         final boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.put("FuelInventory", this.fuelInventory.serializeNBT(registries));
         compound.putInt("FuelTicksRemaining", this.fuelTicksRemaining);
@@ -553,7 +556,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     @Override
     protected void read(final CompoundTag compound, final HolderLookup.Provider registries,
-            final boolean clientPacket) {
+                        final boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         this.fuelInventory.deserializeNBT(registries, compound.getCompound("FuelInventory"));
         this.fuelTicksRemaining = compound.getInt("FuelTicksRemaining");
@@ -617,24 +620,12 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return perp.x * perp.x + perp.y * perp.y + perp.z * perp.z <= currentRad * currentRad;
     }
 
-    public float getIntensity() {
-        return this.intensity;
-    }
-
     public float getFlameScale() {
         if (!this.isActive()) {
             return 0;
         }
 
         return Mth.clamp((float) (Math.log1p(Math.abs(this.getThrust())) * 0.6f), 0.1f, 1.85f);
-    }
-
-    public Container getFuelContainer() {
-        return this.fuelContainer;
-    }
-
-    public ContainerData getMenuData() {
-        return this.menuData;
     }
 
     public void dropFuelInventory() {
@@ -668,8 +659,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     @Override
     public ThrusterFuelMenu createMenu(final int containerId,
-            final @NotNull Inventory playerInventory,
-            final @NotNull Player player) {
+                                       final @NotNull Inventory playerInventory,
+                                       final @NotNull Player player) {
         return ThrusterFuelMenu.forBlockEntity(containerId, playerInventory, this);
     }
 
