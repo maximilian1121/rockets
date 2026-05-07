@@ -720,14 +720,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return perp.x * perp.x + perp.y * perp.y + perp.z * perp.z <= currentRad * currentRad;
     }
 
-    public float getFlameScale() {
-        if (!this.isActive()) {
-            return 0;
-        }
-
-        return Mth.clamp((float) (Math.log1p(Math.abs(this.getThrust())) * 0.6f), 0.1f, 1.85f);
-    }
-
     public void dropFuelInventory() {
         ItemHelper.dropContents(level, worldPosition, this.fuelInventory);
     }
