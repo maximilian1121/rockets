@@ -243,11 +243,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (throttle > 0.01f
             && this.isActive()
             && (this.soundInstance == null
-            || ((ThrusterSoundInstance) this.soundInstance).isStopped())) {
+            || this.soundInstance.isStopped())) {
             this.soundInstance = new ThrusterSoundInstance(this);
             Minecraft.getInstance()
                 .getSoundManager()
-                .play((ThrusterSoundInstance) this.soundInstance);
+                .play(this.soundInstance);
         }
     }
 
@@ -255,7 +255,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public void invalidate() {
         super.invalidate();
         if (level != null && level.isClientSide && soundInstance != null) {
-            ((ThrusterSoundInstance) soundInstance).stopSound();
+            soundInstance.stopSound();
         }
     }
 
