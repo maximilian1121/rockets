@@ -72,7 +72,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     private final Quaternionf rotation = new Quaternionf();
     private boolean wasActiveLastTick;
-    private Object soundInstance;
+    private ThrusterSoundInstance soundInstance;
     @Getter
     private int fuelTicksRemaining;
     @Getter
