@@ -452,8 +452,12 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                                 if (recipe.isPresent()) {
                                     ItemStack result = recipe.get().value().getResultItem(outerLevel.registryAccess()).copy();
                                     result.setCount(drop.getCount());
-                                    Block.popResource(outerLevel, pos, result);
-                                    outerLevel.destroyBlock(pos, false);
+                                    if (result.getItem() instanceof BlockItem blockItem) {
+                                        outerLevel.setBlock(pos, blockItem.getBlock().defaultBlockState(), 3);
+                                    } else {
+                                        Block.popResource(outerLevel, pos, result);
+                                        outerLevel.destroyBlock(pos, false);
+                                    }
                                 }
                             }
                         }
