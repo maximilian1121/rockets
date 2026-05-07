@@ -592,6 +592,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             this.fuelTicksRemaining = burnTime;
         }
         setChanged();
+        assert level != null;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
