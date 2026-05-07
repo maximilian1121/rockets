@@ -271,8 +271,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         this.applyFireDamage();
     }
 
-
-
     protected void applyFireDamage() {
         if (this.level == null || this.level.isClientSide) {
             return;
@@ -320,22 +318,22 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                          lz++) {
                         Vec3 localPos = new Vec3(lx + 0.5, ly + 0.5, lz + 0.5);
                         if (!isPointInCone(
-                            localPos, start, directionVec, length, endRad)) {
+                                localPos, start, directionVec, length, endRad)) {
                             continue;
                         }
 
                         final Vec3 worldVec =
-                            Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
+                                Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
                         entitiesToDamage.addAll(
-                            outerLevel.getEntities(
-                                null,
-                                new AABB(
-                                    worldVec.x - 0.75,
-                                    worldVec.y - 0.75,
-                                    worldVec.z - 0.75,
-                                    worldVec.x + 0.75,
-                                    worldVec.y + 0.75,
-                                    worldVec.z + 0.75)));
+                                outerLevel.getEntities(
+                                        null,
+                                        new AABB(
+                                                worldVec.x - 0.75,
+                                                worldVec.y - 0.75,
+                                                worldVec.z - 0.75,
+                                                worldVec.x + 0.75,
+                                                worldVec.y + 0.75,
+                                                worldVec.z + 0.75)));
                     }
                 }
             }
