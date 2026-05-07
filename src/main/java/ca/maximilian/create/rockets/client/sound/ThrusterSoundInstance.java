@@ -34,7 +34,7 @@ public class ThrusterSoundInstance extends AbstractTickableSoundInstance {
 
         float throttle = this.blockEntity.getIntensity();
         float t = Mth.clamp(throttle, 0.0f, 1.0f);
-        this.volume = Mth.clamp((float) Math.pow(t, 1.8f) * 1.4f, 0.0f, 1.4f);
+        this.volume = Mth.clamp((float) Math.pow(t, 1.8f) * 4.0f, 0.0f, 4.0f);
         this.pitch = Mth.clamp(0.5f + (float) Math.pow(t, 2.2f) * 1.3f, 0.5f, 1.8f);
 
         if (this.volume <= 0.01f) {
