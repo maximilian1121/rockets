@@ -4,7 +4,6 @@ import net.createmod.catnip.config.ConfigBase;
 import org.jetbrains.annotations.NotNull;
 
 public class Config extends ConfigBase {
-    public final ConfigBool evisceration = b(true, "evisceration", Comments.EVISCERATION);
 
     public final EviscerationSettings evisceration = nested(0, EviscerationSettings::new, Comments.EVISCERATION_GROUP);
 
