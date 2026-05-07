@@ -35,7 +35,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -307,7 +306,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             List<Entity> candidateEntities = this.level.getEntities(null, damageBox);
             for (Entity entity : candidateEntities) {
                 if (isPointInCone(
-                    entity.position(), start, directionVec, length, startRad, endRad)) {
+                    entity.position(), start, directionVec, length, endRad)) {
                     entitiesToDamage.add(entity);
                 }
             }
@@ -319,7 +318,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                          lz++) {
                         Vec3 localPos = new Vec3(lx + 0.5, ly + 0.5, lz + 0.5);
                         if (!isPointInCone(
-                            localPos, start, directionVec, length, startRad, endRad)) {
+                            localPos, start, directionVec, length, endRad)) {
                             continue;
                         }
 
@@ -358,7 +357,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                          lz++) {
                         Vec3 localPos = new Vec3(lx + 0.5, ly + 0.5, lz + 0.5);
                         if (!isPointInCone(
-                            localPos, start, directionVec, length, startRad, endRad)) {
+                            localPos, start, directionVec, length, endRad)) {
                             continue;
                         }
 
@@ -705,7 +704,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         Vec3 start,
         Vec3 directionVec,
         double length,
-        double startRad,
         double endRad) {
         Vec3 toPoint = point.subtract(start);
         double distForward = toPoint.dot(directionVec);
@@ -715,7 +713,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         double progress = distForward / length;
-        double currentRad = Mth.lerp(progress, startRad, endRad);
+        double currentRad = Mth.lerp(progress, 1.0, endRad);
 
         Vec3 project = directionVec.scale(distForward);
         Vec3 perp = toPoint.subtract(project);
