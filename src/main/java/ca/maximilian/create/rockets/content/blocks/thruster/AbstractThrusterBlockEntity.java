@@ -3,7 +3,6 @@ package ca.maximilian.create.rockets.content.blocks.thruster;
 import ca.maximilian.create.rockets.CreateRocketsConfigService;
 import ca.maximilian.create.rockets.client.sound.ThrusterSoundInstance;
 import ca.maximilian.create.rockets.index.CreateRocketsParticleTypes;
-import ca.maximilian.create.rockets.index.CreateRocketsSounds;
 import ca.maximilian.create.rockets.menu.ThrusterFuelMenu;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -15,10 +14,8 @@ import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
 import dev.ryanhcode.sable.api.block.propeller.BlockEntitySubLevelPropellerActor;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.SubLevel;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,6 +49,10 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     implements BlockEntitySubLevelPropellerActor, BlockEntityPropeller, MenuProvider {
 
@@ -76,6 +77,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     private int fuelTicksRemaining;
     @Getter
     private int fuelTicksTotal;
+    @Getter
+    @Setter
+    private long lastTickTime = System.nanoTime();
 
     protected AbstractThrusterBlockEntity(
         final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
@@ -594,15 +598,25 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     private void updateIntensity(float deltaTime) {
         final float targetIntensity = this.hasFuel() ? this.getThrottle() : 0.0f;
-        if (targetIntensity > this.intensity) {
-            this.intensity = Mth.lerp(0.015f, this.intensity, targetIntensity);
-        } else {
-            this.intensity = Mth.lerp(0.02f, this.intensity, targetIntensity);
-        }
-    }
 
-    public float getPower() {
-        return this.getIntensity();
+        float riseTime = 0.4f;
+        float fallTime = 5.0f;
+
+        float riseSpeed = 1.0f / riseTime;
+        float fallSpeed = 1.0f / fallTime;
+
+        if (this.intensity < targetIntensity) {
+            this.intensity += riseSpeed * deltaTime;
+
+            if (this.intensity > targetIntensity)
+                this.intensity = targetIntensity;
+
+        } else if (this.intensity > targetIntensity) {
+            this.intensity -= fallSpeed * deltaTime;
+
+            if (this.intensity < targetIntensity)
+                this.intensity = targetIntensity;
+        }
     }
 
     @Override
