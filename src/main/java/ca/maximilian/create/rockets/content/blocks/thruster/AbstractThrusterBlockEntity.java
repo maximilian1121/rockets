@@ -342,8 +342,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         for (final Entity entity : entitiesToDamage) {
-            if (entity.isAlive() && !entity.isOnFire()) {
-                entity.igniteForSeconds(2);
+            if (entity.isAlive() && !(entity instanceof Player player && player.getAbilities().flying) && !(entity instanceof ItemEntity)  && !(entity instanceof Creeper)) {
+                if (!entity.isOnFire()) {
+                    entity.igniteForSeconds(2);
+                }
                 entity.hurt(outerLevel.damageSources().inFire(), 2);
 
                 Vector3d worldThrustVec = new Vector3d(directionVec.x, directionVec.y, directionVec.z);
