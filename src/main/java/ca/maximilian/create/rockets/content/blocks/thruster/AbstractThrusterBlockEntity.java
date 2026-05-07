@@ -415,7 +415,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                         if (random.nextFloat()
                             > CreateRocketsConfigService.server.evisceration.rate.get() / 100f)
                             continue;
-                        final boolean shouldFire = (random.nextFloat() > CreateRocketsConfigService.server.eviscerationRate.get() / 400f);
 
                         final Vec3 worldVec =
                             Sable.HELPER.projectOutOfSubLevel(this.level, localPos);
