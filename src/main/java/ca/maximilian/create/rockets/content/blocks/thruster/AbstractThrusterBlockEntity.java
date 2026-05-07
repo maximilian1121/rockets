@@ -164,7 +164,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         behaviour.setParticleCountProperties(5, 2);
 
         final ThrusterStats stats = this.getThrusterStats();
-        behaviour.addSimpleLayer(stats.offset(), stats.radius());
+        behaviour.addSimpleLayer(1f, 1f);
         behaviour.setParticlePositionUpdater(
             (vector, random) -> {
                 final PropellerActorBehaviour.PropellerLayer layer =
@@ -272,7 +272,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         final double forwardOffset = 3;
         final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
 
-        final double reach = this.getThrusterStats().radius() * 2.5;
+        final double reach = 2.5d;
         final double length =
             Math.max(
                 0.0,
@@ -280,7 +280,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                     * 5
                     * ((float) this.getThrust()
                     / (float) this.getThrusterStats().thrust()));
-        final double startRad = this.getThrusterStats().radius();
+        final double startRad = 1d;
         final double endRad = startRad + (length * 0.2);
 
         final AABB damageBox = computeDamageBox();
@@ -402,7 +402,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 this.level, localNozzleCenter.add(localExhaustDirection));
         final Vec3 exhaustDirection = worldExhaustSample.subtract(worldNozzleCenter).normalize();
         final RandomSource random = this.level.random;
-        final double radius = this.getThrusterStats().radius() * 0.35;
+        final double radius = 0.35d;
 
         final SubLevel subLevel = Sable.HELPER.getContaining(this);
         final Level outerLevel = subLevel != null ? subLevel.getLevel() : this.level;
@@ -648,14 +648,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     private AABB computeDamageBox() {
-        final double reach = this.getThrusterStats().radius() * 2.5;
+        final double reach = 2.5d;
         final Direction direction = this.getBlockDirection();
         final Vec3 directionVec = Vec3.atLowerCornerOf(direction.getNormal());
 
         final Vec3 thrustOrigin = this.getBlockPos().getCenter();
 
-        final double forwardOffset = 3;
-        final double startRad = this.getThrusterStats().radius();
+        final double forwardOffset = 3d;
+        final double startRad = 1d;
         final double length =
             Math.max(
                 0.0,
