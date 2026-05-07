@@ -481,16 +481,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return 0.35f;
     }
 
-    protected AABB getDmgBox() {
-        return this.dmgBox;
-    }
-
     protected float getStartupSoundPitch() {
         return 0.8f;
-    }
-
-    protected SoundEvent getRunningSound() {
-        return CreateRocketsSounds.THRUSTER_SOUND.get();
     }
 
     protected Direction getBackFace() {
