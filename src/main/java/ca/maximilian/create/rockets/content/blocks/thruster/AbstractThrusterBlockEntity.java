@@ -575,10 +575,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             net.minecraft.world.item.Item item = stack.getItem();
             this.fuelInventory.extractItem(FUEL_SLOT, 1, false);
 
-            if (item.hasCraftingRemainingItem()) {
+            if (stack.hasCraftingRemainingItem()) {
                 if (this.fuelInventory.getStackInSlot(FUEL_SLOT).isEmpty()) {
                     this.fuelInventory.setStackInSlot(
-                        FUEL_SLOT, new ItemStack(item.getCraftingRemainingItem()));
+                        FUEL_SLOT, new ItemStack(stack.getCraftingRemainingItem().getItem()));
                 }
             }
         }
