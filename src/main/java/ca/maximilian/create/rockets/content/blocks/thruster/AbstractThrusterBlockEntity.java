@@ -299,7 +299,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 
         final SubLevel subLevel = Sable.HELPER.getContaining(this);
-        final Level outerLevel = subLevel != null ? subLevel.getLevel() : this.level;
+        final ServerLevel outerLevel = (ServerLevel) (subLevel != null ? subLevel.getLevel() : this.level);
         final Set<Entity> entitiesToDamage = new HashSet<>();
 
         if (subLevel == null) {
