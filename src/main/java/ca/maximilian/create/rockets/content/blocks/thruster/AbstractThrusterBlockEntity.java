@@ -345,6 +345,55 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             if (entity.isAlive() && !entity.isOnFire()) {
                 entity.igniteForSeconds(2);
                 entity.hurt(outerLevel.damageSources().inFire(), 2);
+
+                Vector3d worldThrustVec = new Vector3d(directionVec.x, directionVec.y, directionVec.z);
+                if (subLevel != null) {
+                    subLevel.logicalPose().transformNormal(worldThrustVec);
+                }
+
+                Vec3 entityCenter = entity.getBoundingBox().getCenter();
+                Vec3 nozzleCenter = thrustOrigin;
+                if (subLevel != null) {
+                    Vector3d tempCenter = new Vector3d(nozzleCenter.x, nozzleCenter.y, nozzleCenter.z);
+                    subLevel.logicalPose().transformPosition(tempCenter);
+                    nozzleCenter = new Vec3(tempCenter.x, tempCenter.y, tempCenter.z);
+                }
+
+                Vec3 relativePos = entityCenter.subtract(nozzleCenter);
+                Vector3d relPosJoml = new Vector3d(relativePos.x, relativePos.y, relativePos.z);
+
+                double entityDistance = worldThrustVec.dot(relPosJoml);
+
+                double distanceScale = (entityDistance / length);
+                double layerForceScale = Math.max(0, Math.exp(-distanceScale * 2.0));
+
+                if (layerForceScale > 0) {
+                    float modifier = entity.isShiftKeyDown() ? 0.125f : 1f;
+                    double acceleration = 0.5 * this.intensity * modifier * layerForceScale;
+
+                    Vec3 previousMotion = entity.getDeltaMovement();
+                    double pushX = worldThrustVec.x * acceleration;
+                    double pushY = worldThrustVec.y * acceleration;
+                    double pushZ = worldThrustVec.z * acceleration;
+
+                    entity.setDeltaMovement(previousMotion.add(pushX, pushY, pushZ));
+                    entity.fallDistance = 0;
+                    entity.hurtMarked = true;
+                }
+            } else if (entity instanceof ItemEntity itemEntity && CreateRocketsConfigService.server.evisceration.smeltItemsAndBlocks.get()) {
+                final ItemStack drop = itemEntity.getItem();
+                SingleRecipeInput input = new SingleRecipeInput(drop);
+
+                Optional<RecipeHolder<SmeltingRecipe>> recipe = outerLevel.getRecipeManager()
+                        .getRecipeFor(RecipeType.SMELTING, input, outerLevel);
+
+                if (recipe.isPresent()) {
+                    ItemStack result = recipe.get().value().getResultItem(outerLevel.registryAccess()).copy();
+                    result.setCount(drop.getCount());
+                    itemEntity.setItem(result);
+                }
+            } else if (entity instanceof Creeper creeper) {
+                creeper.ignite();
             }
         }
 
