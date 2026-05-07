@@ -194,7 +194,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public void tick() {
         super.tick();
         this.tickFuel();
-        this.updateIntensity();
+
+        long now = System.nanoTime();
+        float deltaTime =
+                (now - getLastTickTime()) / 1_000_000_000.0f;
+
+        this.updateIntensity(deltaTime);
+
+        setLastTickTime(now);
 
         this.rotation.set(this.getBlockDirection().getRotation());
 
@@ -585,7 +592,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    private void updateIntensity() {
+    private void updateIntensity(float deltaTime) {
         final float targetIntensity = this.hasFuel() ? this.getThrottle() : 0.0f;
         if (targetIntensity > this.intensity) {
             this.intensity = Mth.lerp(0.015f, this.intensity, targetIntensity);

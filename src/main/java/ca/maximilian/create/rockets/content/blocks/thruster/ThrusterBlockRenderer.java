@@ -90,7 +90,7 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
                         * 5
                         * ((float) be.getThrust()
                         / (float) be.getThrusterStats().thrust()));
-            final double startRad = be.getThrusterStats().radius();
+            final double startRad = 1d;
             final double endRad = startRad + (length * 0.2);
 
             VertexConsumer lineBuffer = buffer.getBuffer(RenderType.lines());
