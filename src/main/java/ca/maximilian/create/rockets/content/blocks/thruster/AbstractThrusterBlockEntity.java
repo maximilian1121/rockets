@@ -436,9 +436,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                             .getBlockState(pos)
                             .isFlammable(outerLevel, pos, direction)) {
                             outerLevel.destroyBlock(pos, true);
-                        } else if (outerLevel.getBlockState(pos).is(BlockTags.IMPERMEABLE)) {
-                            outerLevel.destroyBlock(pos, true);
-                        } else {
+                        } else if (CreateRocketsConfigService.server.evisceration.smeltItemsAndBlocks.get()) {
                             LootParams.Builder builder = new LootParams.Builder(outerLevel)
                                     .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                                     .withParameter(LootContextParams.TOOL, ItemStack.EMPTY);
