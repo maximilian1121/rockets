@@ -598,8 +598,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     private void updateIntensity(float deltaTime) {
         final float targetIntensity = this.hasFuel() ? this.getThrottle() : 0.0f;
 
-        float riseTime = 0.4f;
-        float fallTime = 5.0f;
+        float riseTime = getThrusterStats().windUpTime();
+        float fallTime = getThrusterStats().windDownTime();
 
         float riseSpeed = 1.0f / riseTime;
         float fallSpeed = 1.0f / fallTime;
