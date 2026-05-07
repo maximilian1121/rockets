@@ -35,6 +35,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -167,7 +168,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         behaviour.setParticleAmountUpdater(() -> 0.12 * Math.abs(this.intensity));
         behaviour.setParticleCountProperties(5, 2);
 
-        final ThrusterStats stats = this.getThrusterStats();
         behaviour.addSimpleLayer(1f, 1f);
         behaviour.setParticlePositionUpdater(
             (vector, random) -> {
@@ -572,7 +572,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 .equals("create:creative_blaze_cake");
 
         if (!isCreative) {
-            net.minecraft.world.item.Item item = stack.getItem();
             this.fuelInventory.extractItem(FUEL_SLOT, 1, false);
 
             if (stack.hasCraftingRemainingItem()) {
