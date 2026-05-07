@@ -387,6 +387,24 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                             outerLevel.destroyBlock(pos, true);
                         } else if (outerLevel.getBlockState(pos).is(BlockTags.IMPERMEABLE)) {
                             outerLevel.destroyBlock(pos, true);
+                        } else {
+                            LootParams.Builder builder = new LootParams.Builder(outerLevel)
+                                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                                    .withParameter(LootContextParams.TOOL, ItemStack.EMPTY);
+
+                            for (ItemStack drop : outerLevel.getBlockState(pos).getDrops(builder)) {
+                                SingleRecipeInput input = new SingleRecipeInput(drop);
+
+                                Optional<RecipeHolder<SmeltingRecipe>> recipe = outerLevel.getRecipeManager()
+                                        .getRecipeFor(RecipeType.SMELTING, input, outerLevel);
+
+                                if (recipe.isPresent()) {
+                                    ItemStack result = recipe.get().value().getResultItem(outerLevel.registryAccess()).copy();
+                                    result.setCount(drop.getCount());
+                                    Block.popResource(outerLevel, pos, result);
+                                    outerLevel.destroyBlock(pos, false);
+                                }
+                            }
                         }
                     }
                 }
