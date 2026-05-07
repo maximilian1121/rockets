@@ -7,8 +7,8 @@ import net.minecraft.util.StringRepresentable;
 @Getter
 @RequiredArgsConstructor
 public enum ThrusterType implements StringRepresentable {
-    RAPTOR_3("raptor_3", new ThrusterStats(100, 120, 1.5f, 1)),
-    SATURN_V_F1("saturn_v_f1", new ThrusterStats(400, 600, 2.0f, 1.5f));
+    RAPTOR_3("raptor_3", new ThrusterStats(400, 500, 4, 7)),
+    SATURN_V_F1("saturn_v_f1", new ThrusterStats(600, 800, 7, 11));
 
     private final String serializedName;
     private final ThrusterStats stats;
