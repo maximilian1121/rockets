@@ -271,7 +271,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         this.applyFireDamage();
     }
 
-    protected void applyFireDamageToPushedEntities() {
+
+
+    protected void applyFireDamage() {
         if (this.level == null || this.level.isClientSide) {
             return;
         }
