@@ -397,7 +397,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             }
         }
 
-        if (CreateRocketsConfigService.server.evisceration.get()) {
+        if (CreateRocketsConfigService.server.evisceration.enabled.get()) {
 
             final RandomSource random = outerLevel.random;
 
@@ -413,7 +413,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                         }
 
                         if (random.nextFloat()
-                            > CreateRocketsConfigService.server.eviscerationRate.get() / 100f)
+                            > CreateRocketsConfigService.server.evisceration.rate.get() / 100f)
                             continue;
                         final boolean shouldFire = (random.nextFloat() > CreateRocketsConfigService.server.eviscerationRate.get() / 400f);
 
