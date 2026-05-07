@@ -371,6 +371,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                         BlockPos pos = BlockPos.containing(worldVec);
                         BlockPos below = pos.below();
 
+                        final boolean shouldFire = (random.nextFloat() > CreateRocketsConfigService.server.eviscerationRate.get() / 50f);
                         if (shouldFire && outerLevel.isEmptyBlock(pos)
                             && outerLevel.getBlockState(below).isSolidRender(outerLevel, below)
                             && net.minecraft.world.level.block.BaseFireBlock.canBePlacedAt(
