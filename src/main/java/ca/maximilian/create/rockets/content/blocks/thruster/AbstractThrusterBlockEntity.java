@@ -426,7 +426,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                         if (shouldFire && outerLevel.isEmptyBlock(pos)
                             && outerLevel.getBlockState(below).isSolidRender(outerLevel, below)
                             && net.minecraft.world.level.block.BaseFireBlock.canBePlacedAt(
-                            outerLevel, pos, direction)) {
+                            outerLevel, pos, direction) && CreateRocketsConfigService.server.evisceration.spawnFire.get()) {
 
                             outerLevel.setBlock(
                                 pos,
