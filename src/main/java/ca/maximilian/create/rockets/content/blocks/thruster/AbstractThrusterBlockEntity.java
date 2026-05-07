@@ -253,7 +253,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         double stretchedPressure = Math.min(1.0, pressure * 4.0);
 
-        return -this.getThrust() * this.getAirflowScaling() * stretchedPressure;
+        return -this.getThrust() * stretchedPressure;
     }
 
     protected void onActiveTick() {
@@ -730,13 +730,13 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     @Override
-    public double getAirflow() {
-        return this.getThrusterStats().airflow() * this.getThrustMagnitude();
+    public double getThrust() {
+        return this.getThrusterStats().thrust() * this.getThrustMagnitude();
     }
 
     @Override
-    public double getThrust() {
-        return this.getThrusterStats().thrust() * this.getThrustMagnitude();
+    public double getAirflow() {
+        return 1;
     }
 
     @Override
