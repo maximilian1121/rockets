@@ -82,7 +82,7 @@ public class ThrusterBlockRenderer extends SafeBlockEntityRenderer<AbstractThrus
             final double forwardOffset = 3;
             final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
 
-            final double reach = 2.5d;
+            final double reach = 4d;
             final double length =
                 Math.max(
                     0.0,

@@ -282,7 +282,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         final double forwardOffset = 3;
         final Vec3 start = thrustOrigin.add(directionVec.scale(forwardOffset));
 
-        final double reach = 2.5d;
+        final double reach = 4d;
         final double length =
             Math.max(
                 0.0,
@@ -668,7 +668,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     private AABB computeDamageBox() {
-        final double reach = 2.5d;
+        final double reach = 4d;
         final Direction direction = this.getBlockDirection();
         final Vec3 directionVec = Vec3.atLowerCornerOf(direction.getNormal());
 
