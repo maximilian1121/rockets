@@ -184,9 +184,9 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         // Destroys other block
         level.destroyBlock(counterPartPosition, false);
 
-        // Ensures to drop fuel inventory
-        dropFuelInventory(level, pos);
-        dropFuelInventory(level, counterPartPosition);
+//        // Ensures to drop fuel inventory
+//        dropFuelInventory(level, pos);
+//        dropFuelInventory(level, counterPartPosition);
 
         if (!isMoving
             && state.hasBlockEntity()
