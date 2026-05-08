@@ -14,6 +14,10 @@ import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
 import dev.ryanhcode.sable.api.block.propeller.BlockEntitySubLevelPropellerActor;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.SubLevel;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -59,11 +63,6 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     implements BlockEntitySubLevelPropellerActor, BlockEntityPropeller, MenuProvider {
@@ -352,7 +351,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         for (final Entity entity : entitiesToDamage) {
-            if (entity.isAlive() && !(entity instanceof Player player && player.getAbilities().flying) && !(entity instanceof ItemEntity)  && !(entity instanceof Creeper)) {
+            if (entity.isAlive()
+                && !(entity instanceof Player player && player.getAbilities().flying)
+                && !(entity instanceof ItemEntity)  && !(entity instanceof Creeper)
+            ) {
                 if (!entity.isOnFire()) {
                     entity.igniteForSeconds(2);
                 }
@@ -392,7 +394,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                     entity.fallDistance = 0;
                     entity.hurtMarked = true;
                 }
-            } else if (entity instanceof ItemEntity itemEntity && CreateRocketsConfigService.server.evisceration.smeltItemsAndBlocks.get()) {
+            } else if (entity instanceof ItemEntity itemEntity
+                && CreateRocketsConfigService.server.evisceration.smeltItemsAndBlocks.get()
+            ) {
                 final ItemStack drop = itemEntity.getItem();
                 SingleRecipeInput input = new SingleRecipeInput(drop);
 
