@@ -181,7 +181,6 @@ public abstract class AbstractThrusterBlock<T extends AbstractThrusterBlockEntit
         final boolean isMoving) {
         var counterPartPosition = this.getCounterpartPos(state, pos);
 
-        // Destroys other block
         level.destroyBlock(counterPartPosition, false);
 
         if (!isMoving
