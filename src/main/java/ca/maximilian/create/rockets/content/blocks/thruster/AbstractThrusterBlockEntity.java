@@ -83,7 +83,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     private final Quaternionf rotation = new Quaternionf();
     private boolean wasActiveLastTick;
-    private ThrusterSoundInstance soundInstance;
+    private Object soundInstance;
     @Getter
     private int fuelTicksRemaining;
     @Getter
@@ -239,14 +239,15 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (this.level == null || !this.level.isClientSide) return;
 
         float throttle = this.getIntensity();
+        ThrusterSoundInstance instance = (ThrusterSoundInstance) this.soundInstance;
         if (throttle > 0.01f
             && this.isActive()
-            && (this.soundInstance == null
-            || this.soundInstance.isStopped())) {
-            this.soundInstance = new ThrusterSoundInstance(this);
+            && (instance == null || instance.isStopped())) {
+            instance = new ThrusterSoundInstance(this);
+            this.soundInstance = instance;
             Minecraft.getInstance()
                 .getSoundManager()
-                .play(this.soundInstance);
+                .play(instance);
         }
     }
 
@@ -254,7 +255,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public void invalidate() {
         super.invalidate();
         if (level != null && level.isClientSide && soundInstance != null) {
-            soundInstance.stopSound();
+            ((ThrusterSoundInstance) soundInstance).stopSound();
         }
     }
 
