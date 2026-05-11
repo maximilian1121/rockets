@@ -1,7 +1,7 @@
 package ca.maximilian.create.rockets.content.blocks.thruster;
 
 import ca.maximilian.create.rockets.CreateRocketsConfigService;
-import ca.maximilian.create.rockets.client.sound.ThrusterSoundInstance;
+import ca.maximilian.create.rockets.client.sound.ThrusterSoundManager;
 import ca.maximilian.create.rockets.index.CreateRocketsParticleTypes;
 import ca.maximilian.create.rockets.menu.ThrusterFuelMenu;
 import com.simibubi.create.AllItems;
@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -83,7 +82,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     private final Quaternionf rotation = new Quaternionf();
     private boolean wasActiveLastTick;
-    private Object soundInstance;
     @Getter
     private int fuelTicksRemaining;
     @Getter
@@ -91,6 +89,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     @Getter
     @Setter
     private long lastTickTime = System.nanoTime();
+    @Getter
+    private ThrusterSoundManager thrusterSoundManager = new ThrusterSoundManager();
 
     protected AbstractThrusterBlockEntity(
         final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
@@ -238,24 +238,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected void tickThrusterSoundClient() {
         if (this.level == null || !this.level.isClientSide) return;
 
-        float throttle = this.getIntensity();
-        ThrusterSoundInstance instance = (ThrusterSoundInstance) this.soundInstance;
-        if (throttle > 0.01f
-            && this.isActive()
-            && (instance == null || instance.isStopped())) {
-            instance = new ThrusterSoundInstance(this);
-            this.soundInstance = instance;
-            Minecraft.getInstance()
-                .getSoundManager()
-                .play(instance);
-        }
+        getThrusterSoundManager().tick(this);
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
-        if (level != null && level.isClientSide && soundInstance != null) {
-            ((ThrusterSoundInstance) soundInstance).stopSound();
+        if (level != null && level.isClientSide && getThrusterSoundManager() != null) {
+            getThrusterSoundManager().invalidate();
         }
     }
 
